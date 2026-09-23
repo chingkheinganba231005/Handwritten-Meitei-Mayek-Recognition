@@ -4,6 +4,8 @@ title: "Handwritten Meitei Mayek Recognition"
 authors:
   - family-names: Rajkumar
     given-names: Chingkheinganba
+    orcid: "https://orcid.org/0009-0002-2620-0281"
+    affiliation: "School of Computing and Data Science, The University of Hong Kong"
 license: MIT
 repository-code: "https://github.com/chingkheinganba231005/Handwritten-Meitei-Mayek-Recognition"
 url: "https://huggingface.co/spaces/Chingkheinganba/handwritten-meitei-mayek-recognition"
