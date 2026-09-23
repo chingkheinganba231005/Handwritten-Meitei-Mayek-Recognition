@@ -7,7 +7,7 @@ sdk: static
 app_file: index.html
 pinned: false
 license: mit
-short_description: Draw a Meitei Mayek character; a CNN reads it in your browser
+short_description: Handwritten Meitei Mayek recognition in your browser
 models:
   - {hf_id}
 ---

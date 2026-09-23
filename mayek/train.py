@@ -4,11 +4,18 @@ A member config (see ``model.MEMBERS``) may also set: ``meta`` (size-aware),
 ``pretrained``, ``seed``, ``smoothing``, ``ema``, ``batch``, ``aug`` (a preset
 name from ``augment.AUG_PRESETS``) and ``keep_raw`` (also save the last raw,
 non-averaged weights).
+
+Checkpoints: the resumable state (weights, averaged weights, optimiser) is
+written to local disk after every epoch and copied to ``work`` (e.g. Google
+Drive) every ``DRIVE_EVERY`` epochs. Mounted cloud drives fail now and then,
+so every write goes to a temporary file first and is retried.
 """
 
 import copy
 import math
+import os
 import random
+import tempfile
 import time
 from pathlib import Path
 
@@ -18,6 +25,43 @@ import torch.nn as nn
 
 from .augment import AUG_PRESETS, augment, view
 from .model import make_model
+
+
+DRIVE_EVERY = 5
+LOCAL = Path(os.environ.get("MAYEK_LOCAL_CKPT", Path(tempfile.gettempdir()) / "mayek_ckpt"))
+
+
+def safe_save(obj, path, tries=4):
+    """torch.save through a temporary file and a rename, retried. Returns the error if every try failed."""
+    path = Path(path)
+    tmp = path.with_name(path.name + ".tmp")
+    err = None
+    for k in range(tries):
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            torch.save(obj, tmp)
+            os.replace(tmp, path)
+            return None
+        except (RuntimeError, OSError) as e:
+            err = e
+            time.sleep(5 * (k + 1))
+    return err
+
+
+def _load_state(paths, device, log):
+    """The most advanced readable checkpoint among ``paths`` (corrupt ones are skipped)."""
+    best = None
+    for p in paths:
+        if not p.exists():
+            continue
+        try:
+            ck = torch.load(p, map_location=device, weights_only=False)
+        except Exception as e:  # half-written file after a crash
+            log(f"ignoring unreadable checkpoint {p} ({type(e).__name__})")
+            continue
+        if best is None or ck["epoch"] > best["epoch"]:
+            best = ck
+    return best
 
 
 def amp_dtype(device):
@@ -111,8 +155,9 @@ def train(name, cfg, train_idx, tag, store, labels, work, val_idx=None, num_clas
     crit = nn.CrossEntropyLoss(label_smoothing=cfg.get("smoothing", 0.1))
     y_all = torch.as_tensor(labels, device=device)
     start, step, history = 1, 0, []
-    if (out / "last.pt").exists():
-        ck = torch.load(out / "last.pt", map_location=device, weights_only=False)
+    local = LOCAL / name / tag / "last.pt"
+    ck = _load_state([out / "last.pt", local], device, log)
+    if ck is not None:
         model.load_state_dict(ck["model"])
         ema.module.load_state_dict(ck["ema"])
         opt.load_state_dict(ck["opt"])
@@ -146,13 +191,27 @@ def train(name, cfg, train_idx, tag, store, labels, work, val_idx=None, num_clas
             row["val_ema"] = float((predict(ema.module, val_idx, cfg, store).argmax(1) == labels[val_idx]).mean())
         history.append(row)
         log(f"{name}/{tag} " + "  ".join(f"{k} {v:.4g}" if isinstance(v, float) else f"{k} {v}" for k, v in row.items()))
-        torch.save({"model": model.state_dict(), "ema": ema.module.state_dict(), "opt": opt.state_dict(),
-                    "ema_updates": ema.updates, "epoch": epoch, "step": step, "history": history}, out / "last.pt")
+        state = {"model": model.state_dict(), "ema": ema.module.state_dict(), "opt": opt.state_dict(),
+                 "ema_updates": ema.updates, "epoch": epoch, "step": step, "history": history}
+        safe_save(state, local, tries=2)
+        if epoch % DRIVE_EVERY == 0 and epoch < cfg["epochs"]:
+            err = safe_save(state, out / "last.pt")
+            if err is not None:
+                log(f"{name}/{tag}: could not copy the checkpoint to {out} ({err}); training goes on")
 
-    if cfg.get("keep_raw"):
-        torch.save({"model": model.state_dict(), "cfg": cfg}, out / "raw.pt")
-    torch.save({"model": ema.module.state_dict(), "cfg": cfg, "history": history}, out / "final.pt")
+    final = {"model": ema.module.state_dict(), "cfg": cfg, "history": history}
+    for what, obj, path in (("raw", {"model": model.state_dict(), "cfg": cfg}, out / "raw.pt"),
+                            ("final", final, out / "final.pt")):
+        if what == "raw" and not cfg.get("keep_raw"):
+            continue
+        err = safe_save(obj, path, tries=6)
+        if err is not None:
+            backup = LOCAL / name / tag / path.name
+            safe_save(obj, backup)
+            raise RuntimeError(f"Could not write {path} ({err}). Is the drive full? A copy is in {backup}; "
+                               "free some space and run the cell again, training will not restart.") from err
     (out / "last.pt").unlink(missing_ok=True)
+    local.unlink(missing_ok=True)
     return ema.module.eval()
 
 

@@ -1,6 +1,4 @@
 import json
-import zipfile
-
 import cv2
 import numpy as np
 import pandas as pd
@@ -11,16 +9,7 @@ from mayek.model import make_model
 from mayek.recognizer import Recognizer, export
 from mayek.split import make_split
 
-from helpers import glyph
-
-
-def fake_zip(path, per_class=6, classes=3):
-    with zipfile.ZipFile(path, "w") as z:
-        for split, n in (("train", per_class), ("test", 2)):
-            for c in range(classes):
-                for i in range(n):
-                    ok, buf = cv2.imencode(".png", glyph(c + i, thickness=1 + i % 3))
-                    z.writestr(f"TUMMHCD-TEST-TRAIN/TUMMHCD{split}/{split}_{c:03d}/img{i}.png", buf.tobytes())
+from helpers import fake_zip, glyph
 
 
 def test_split_is_deterministic(tmp_path):
