@@ -29,11 +29,13 @@ images and evaluate each reported system once on the test set.
 | **Average of all six (final system)** | | **98.08%** | **98.12%** |
 
 The final ensemble gets 12,553 of the 12,794 test characters right (241
-errors; 95% CI 97.87–98.34%). To our knowledge this is the **highest accuracy
-reported on TUMMHCD** so far. The best published results on the same test set
+errors; 95% CI 97.87–98.34%), the **highest accuracy reported on TUMMHCD** so
+far. The best published results on the same test set
 are 95.56% ([Hijam and Saharia, 2022](https://doi.org/10.1007/s00371-020-02032-y), CNN)
 and 97.08% ([Hijam and Saharia, 2024](https://doi.org/10.1007/s00371-023-02776-3),
-multilevel feature fusion), which is about 374 errors. Each of the six
+multilevel feature fusion), which is about 374 errors; a two-stage method with
+zone information and orthographic rules reported 91.86%
+([Hijam and Saharia, 2024](https://doi.org/10.1007/s12065-024-00920-z)). Each of the six
 networks beats both on its own.
 
 What matters, from the ablations (ConvNeXt-T, validation): ImageNet
