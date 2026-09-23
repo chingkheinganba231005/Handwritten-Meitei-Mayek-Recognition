@@ -17,6 +17,7 @@ import numpy as np
 import torch
 
 from .charset import CLASSES
+from .files import must_write
 from .model import CHANNELS
 
 ORT_VERSION = "1.30.0"
@@ -46,13 +47,16 @@ def export_onnx(model, cfg, path, img=128, half_weights=True):
         args, names = (x, torch.zeros(2, 5)), ["image", "meta"]
     kwargs = dict(input_names=names, output_names=["logits"], opset_version=17,
                   dynamic_axes={n: {0: "batch"} for n in names + ["logits"]})
-    try:
-        torch.onnx.export(net, args, str(path), dynamo=False, **kwargs)
-    except TypeError:  # older torch without the dynamo switch
-        torch.onnx.export(net, args, str(path), **kwargs)
-    if half_weights:
-        _store_half(path)
-    return path
+
+    def write(f):
+        try:
+            torch.onnx.export(net, args, f, dynamo=False, **kwargs)
+        except TypeError:  # older torch without the dynamo switch
+            torch.onnx.export(net, args, f, **kwargs)
+        if half_weights:
+            _store_half(f)
+
+    return must_write(write, path)
 
 
 def _store_half(path):

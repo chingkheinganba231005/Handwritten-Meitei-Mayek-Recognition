@@ -13,6 +13,7 @@ import torch
 
 from .augment import TTA_VIEWS, view
 from .charset import CLASSES
+from .files import must_write
 from .model import make_model
 from .preprocess import preprocess, size_features, to_dataset_scale
 
@@ -93,7 +94,7 @@ def export(members, run_dir, out_dir, stats, img=128, stroke_ratio=0.1, num_clas
     entries = []
     for m in members:
         ck = torch.load(Path(run_dir) / m["name"] / "full" / "final.pt", map_location="cpu", weights_only=False)
-        torch.save(ck["model"], out_dir / f"{m['name']}.pt")
+        must_write(lambda f: torch.save(ck["model"], f), out_dir / f"{m['name']}.pt")
         cfg = {k: v for k, v in m["cfg"].items() if k in ("arch", "channels", "drop_path", "meta")}
         entries.append({"name": m["name"], "file": f"{m['name']}.pt", "cfg": cfg,
                         "views": list(m["views"]), "weight": float(m["weight"])})

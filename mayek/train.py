@@ -8,7 +8,7 @@ non-averaged weights).
 Checkpoints: the resumable state (weights, averaged weights, optimiser) is
 written to local disk after every epoch and copied to ``work`` (e.g. Google
 Drive) every ``DRIVE_EVERY`` epochs. Mounted cloud drives fail now and then,
-so every write goes to a temporary file first and is retried.
+so files are made locally and copied over (see ``files.write_file``).
 """
 
 import copy
@@ -24,6 +24,7 @@ import torch
 import torch.nn as nn
 
 from .augment import AUG_PRESETS, augment, view
+from .files import must_write, write_file
 from .model import make_model
 
 
@@ -32,20 +33,8 @@ LOCAL = Path(os.environ.get("MAYEK_LOCAL_CKPT", Path(tempfile.gettempdir()) / "m
 
 
 def safe_save(obj, path, tries=4):
-    """torch.save through a temporary file and a rename, retried. Returns the error if every try failed."""
-    path = Path(path)
-    tmp = path.with_name(path.name + ".tmp")
-    err = None
-    for k in range(tries):
-        try:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            torch.save(obj, tmp)
-            os.replace(tmp, path)
-            return None
-        except (RuntimeError, OSError) as e:
-            err = e
-            time.sleep(5 * (k + 1))
-    return err
+    """torch.save, made on local disk and copied to ``path``. Returns the error if every try failed."""
+    return write_file(lambda f: torch.save(obj, f), path, tries)
 
 
 def _load_state(paths, device, log):
@@ -219,6 +208,6 @@ def cached_preds(work, tag, split, make):
     """Load saved probabilities (float16 on disk) or compute and save them."""
     f = Path(work) / "preds" / f"{tag}_{split}.npy"
     if not f.exists():
-        f.parent.mkdir(parents=True, exist_ok=True)
-        np.save(f, make().astype(np.float16))
+        p = make().astype(np.float16)
+        must_write(lambda tmp: np.save(tmp, p), f)
     return np.load(f).astype(np.float32)
