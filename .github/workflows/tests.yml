@@ -12,6 +12,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
       - run: pip install timm numpy pandas opencv-python-headless scikit-image scikit-learn pillow pytest onnx onnxruntime onnxscript
       - run: pytest -q

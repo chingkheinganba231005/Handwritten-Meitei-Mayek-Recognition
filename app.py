@@ -17,7 +17,7 @@ from mayek.preprocess import load_gray
 from mayek.recognizer import Recognizer
 
 MODEL_DIR = Path(os.environ.get("MAYEK_MODELS", "models"))
-REPO_URL = "https://github.com/chingkheinganba231005/handwritten-meitei-mayek-recognition"
+REPO_URL = "https://github.com/chingkheinganba231005/Handwritten-Meitei-Mayek-Recognition"
 
 recognizer = Recognizer(MODEL_DIR)
 config = json.loads((MODEL_DIR / "config.json").read_text())

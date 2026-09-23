@@ -24,7 +24,7 @@ isolated handwritten Meitei Mayek characters. The ensemble gets
 
 ```bash
 git clone {repo_url}
-cd handwritten-meitei-mayek-recognition && pip install -r requirements.txt
+cd Handwritten-Meitei-Mayek-Recognition && pip install -r requirements.txt
 huggingface-cli download {hf_id} --local-dir models
 ```
 

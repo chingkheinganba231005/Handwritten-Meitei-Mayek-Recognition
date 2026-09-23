@@ -6,7 +6,7 @@ designed for handwriting.
 
 **Live demo:** [huggingface.co/spaces/Chingkheinganba/handwritten-meitei-mayek-recognition](https://huggingface.co/spaces/Chingkheinganba/handwritten-meitei-mayek-recognition)
 (runs in your browser) &nbsp;·&nbsp; **Trained networks:** [huggingface.co/Chingkheinganba/handwritten-meitei-mayek-recognition](https://huggingface.co/Chingkheinganba/handwritten-meitei-mayek-recognition)
-&nbsp;·&nbsp; **Experiments:** [open in Colab](https://colab.research.google.com/github/chingkheinganba231005/handwritten-meitei-mayek-recognition/blob/main/notebooks/experiments.ipynb)
+&nbsp;·&nbsp; **Experiments:** [open in Colab](https://colab.research.google.com/github/chingkheinganba231005/Handwritten-Meitei-Mayek-Recognition/blob/main/notebooks/experiments.ipynb)
 
 ![Pipeline](assets/pipeline.png)
 
