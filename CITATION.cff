@@ -4,8 +4,6 @@ title: "Handwritten Meitei Mayek Recognition"
 authors:
   - family-names: Rajkumar
     given-names: Chingkheinganba
-  - family-names: Rajkumar
-    given-names: Korounganba
 license: MIT
 repository-code: "https://github.com/chingkheinganba231005/Handwritten-Meitei-Mayek-Recognition"
 url: "https://huggingface.co/spaces/Chingkheinganba/handwritten-meitei-mayek-recognition"

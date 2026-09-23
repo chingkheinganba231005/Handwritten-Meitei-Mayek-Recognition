@@ -15,24 +15,38 @@ designed for handwriting.
 TUMMHCD has 85,124 isolated character images: 72,330 for training and 12,794
 for testing. We hold out 15% of each training class (seed 42) for
 validation, make every decision there, then retrain on all 72,330 training
-images and evaluate on the test set.
+images and evaluate each reported system once on the test set.
 
 | Network | Input | Validation (61,504 train) | Test (72,330 train) |
 |---|---|---:|---:|
 | ConvNeXt-T, ImageNet-22k | ink, 128 × 128, 5 views | 97.86% | 97.83% |
-| EfficientNetV2-S, ImageNet-21k | ink, 128 × 128, 5 views | 97.88% | **97.95%** |
+| EfficientNetV2-S, ImageNet-21k | ink, 128 × 128, 5 views | 97.88% | 97.95% |
 | ResNet-50-D, ImageNet-1k | ink + skeleton + distance, 1 view | 97.67% | 97.64% |
-| Average of the three | | 98.07% | |
+| ConvNeXt-T + size features | as above + 5 size numbers | 97.79% | 97.79% |
+| EfficientNetV2-S + size features | as above + 5 size numbers | 97.88% | 97.87% |
+| ResNet-50-D + size features | as above + 5 size numbers, 5 views | 97.57% | 97.73% |
+| Average of the three base networks | | 98.07% | 98.06% |
+| **Average of all six (final system)** | | **98.08%** | **98.12%** |
 
-For comparison, the best published results on the same test set are 95.56%
-([Hijam and Saharia, 2022](https://doi.org/10.1007/s00371-020-02032-y), CNN) and
-97.08% ([Hijam and Saharia, 2024](https://doi.org/10.1007/s00371-023-02776-3),
-multilevel feature fusion). Every network above beats both on its own.
+The final ensemble gets 12,553 of the 12,794 test characters right (241
+errors; 95% CI 97.87–98.34%). To our knowledge this is the **highest accuracy
+reported on TUMMHCD** so far. The best published results on the same test set
+are 95.56% ([Hijam and Saharia, 2022](https://doi.org/10.1007/s00371-020-02032-y), CNN)
+and 97.08% ([Hijam and Saharia, 2024](https://doi.org/10.1007/s00371-023-02776-3),
+multilevel feature fusion), which is about 374 errors. Each of the six
+networks beats both on its own.
 
-Most of the remaining errors come from a handful of character pairs that
-look almost the same in isolation, above all ꯢ (*i lonsum*) and ꯏ (*i*).
-The notebook's error analysis, ablations, robustness tests and cost
-measurements cover this in detail.
+What matters, from the ablations (ConvNeXt-T, validation): ImageNet
+pretraining (−0.77 points without it), augmentation (−0.48 without it;
+geometric augmentation alone is even 0.18 points *better* than the full
+recipe), the 128 px input (−0.23 at 64 px) and label smoothing (−0.15).
+Skeleton and distance-transform channels make no difference to ResNet-50-D.
+
+Most of the remaining errors come from four character pairs that look almost
+the same in isolation (61% of the errors), above all ꯢ (*i lonsum*) and ꯏ
+(*i*). Every number, including robustness to 14 corruptions and the cost
+measurements, is in [`results/results.json`](results/results.json), written
+by the experiments notebook.
 
 ## How it works
 
@@ -56,7 +70,9 @@ character is a different character or none at all.
 
 **Inference.** Each network uses one view or five (zoomed in and out by 6%,
 shifted by 2 px), whichever was better on validation, and the ensemble
-averages the probabilities.
+averages the probabilities. The size-aware versions also get five size
+numbers (image and ink-box height and width, ink fraction) through a small
+MLP, because cropping to the ink throws that information away.
 
 **Demo.** The demo is a static web page: the EfficientNetV2-S network,
 exported to ONNX, runs in the visitor's browser with ONNX Runtime Web, and
@@ -120,6 +136,7 @@ mayek/
 web/              the browser demo (HTML, CSS, JavaScript)
 app.py            local Gradio demo of the full ensemble
 notebooks/        experiments.ipynb: every number in the paper
+results/          results.json written by the notebook (the final run)
 space/            cards for the Hugging Face Space and model repository
 tests/            pytest
 ```
