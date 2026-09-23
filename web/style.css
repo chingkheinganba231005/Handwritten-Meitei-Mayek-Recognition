@@ -1,0 +1,81 @@
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --text: #1c2430;
+  --muted: #5b6573;
+  --line: #d9dee5;
+  --accent: #1f5aa6;
+  --accent-soft: #e3ecf8;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12161c;
+    --card: #1b2129;
+    --text: #e6eaf0;
+    --muted: #9aa4b2;
+    --line: #2d3540;
+    --accent: #7fb0f0;
+    --accent-soft: #22324a;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 16px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+header, main, footer { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+header h1 { font-size: 1.6rem; margin: 28px 0 4px; }
+header p, footer p { color: var(--muted); margin: 0 0 20px; }
+a { color: var(--accent); }
+
+main { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+
+.tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+.tabs button { flex: 1; background: transparent; color: var(--text); border: 1px solid var(--line); }
+.tabs button[aria-selected="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+#pad {
+  width: 100%; aspect-ratio: 1; display: block; touch-action: none; cursor: crosshair;
+  border: 1px solid var(--line); border-radius: 8px; background: #fff;
+}
+#upload-preview { max-width: 100%; border: 1px solid var(--line); border-radius: 8px; margin-top: 10px; }
+.file { display: block; padding: 18px; border: 1px dashed var(--line); border-radius: 8px; text-align: center; cursor: pointer; }
+.file input { display: block; margin: 10px auto 0; }
+
+.row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; margin: 10px 0; }
+.row label { color: var(--muted); font-size: 0.92rem; }
+.hint { color: var(--muted); font-size: 0.85rem; margin: 6px 0 0; }
+
+button {
+  font: inherit; font-weight: 600; padding: 9px 16px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--accent); background: var(--accent); color: #fff;
+}
+button.secondary { background: transparent; color: var(--accent); }
+button:disabled { opacity: 0.5; cursor: wait; }
+#recognise { width: 100%; margin-top: 4px; }
+#status { color: var(--muted); font-size: 0.9rem; min-height: 1.5em; margin: 10px 0 0; }
+
+.best { display: flex; align-items: center; gap: 16px; min-height: 104px; }
+.mayek, #glyph, #top .g { font-family: "Noto Sans Meetei Mayek", sans-serif; }
+#glyph { font-size: 72px; line-height: 1; min-width: 72px; text-align: center; }
+#label { color: var(--muted); }
+
+#top { list-style: none; padding: 0; margin: 12px 0; }
+#top li { display: grid; grid-template-columns: 36px minmax(0, 1fr) minmax(60px, 1.2fr) 56px; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+#top .g { font-size: 26px; text-align: center; }
+#top .n { font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#top .bar { height: 8px; background: var(--accent-soft); border-radius: 4px; overflow: hidden; }
+#top .bar span { display: block; height: 100%; background: var(--accent); }
+#top .p { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.9rem; }
+
+figure { margin: 8px 0 0; display: flex; align-items: center; gap: 12px; }
+#seen { width: 96px; height: 96px; border: 1px solid var(--line); border-radius: 6px; background: #fff; image-rendering: pixelated; }
+figcaption { color: var(--muted); font-size: 0.85rem; }
+
+footer { margin-top: 20px; }
+footer p { font-size: 0.9rem; }

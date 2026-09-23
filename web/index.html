@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Handwritten Meitei Mayek recognition</title>
+  <meta name="description" content="Draw or upload a handwritten Meitei Mayek character and see what a fine-tuned CNN reads. Runs entirely in your browser.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Meetei+Mayek&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Handwritten Meitei Mayek recognition</h1>
+    <p>One character at a time, from all 55 classes of the TUMMHCD dataset: digits, letters,
+      final consonants (<i>lonsum</i>), vowel signs and punctuation.
+      The network runs in your browser; nothing you draw or upload leaves your device.</p>
+  </header>
+
+  <main>
+    <section class="input">
+      <div class="tabs" role="tablist">
+        <button role="tab" data-mode="draw" aria-selected="true">Draw</button>
+        <button role="tab" data-mode="upload" aria-selected="false">Upload</button>
+      </div>
+
+      <div id="draw-panel">
+        <canvas id="pad" width="400" height="400" aria-label="Drawing canvas"></canvas>
+        <div class="row">
+          <label>Pen <input id="pen" type="range" min="6" max="40" value="16"> <span id="pen-value">16</span></label>
+          <button id="clear" class="secondary">Clear</button>
+        </div>
+        <p class="hint">Fill the canvas the way you would fill a box on a form: the size you write at counts.</p>
+      </div>
+
+      <div id="upload-panel" hidden>
+        <label class="file">Choose a photo or scan of one character
+          <input id="file" type="file" accept="image/*">
+        </label>
+        <canvas id="upload-preview" hidden></canvas>
+        <p class="hint">Dark ink on light paper works best. The character is cropped automatically.</p>
+      </div>
+
+      <div class="row">
+        <label><input id="tta" type="checkbox" checked> Average 5 shifted and zoomed views</label>
+        <label><input id="live" type="checkbox" checked> Recognise after every stroke</label>
+      </div>
+      <button id="recognise" disabled>Recognise</button>
+      <p id="status" role="status">Loading…</p>
+    </section>
+
+    <section class="output" aria-live="polite">
+      <div class="best">
+        <div id="glyph" class="mayek"></div>
+        <div id="label"></div>
+      </div>
+      <ol id="top"></ol>
+      <figure>
+        <canvas id="seen" width="128" height="128"></canvas>
+        <figcaption>What the network sees</figcaption>
+      </figure>
+    </section>
+  </main>
+
+  <footer>
+    <p><span id="model-name"></span>, fine-tuned from ImageNet on TUMMHCD, gets <span id="accuracy">–</span>
+      top-1 accuracy on the 12,794 test images of the dataset. Handwriting that looks very
+      different from those scans (thin pens, unusual proportions, photos with clutter) will be
+      read less reliably. Code, paper experiments and the full ensemble:
+      <a id="repo" href="https://github.com/chingkheinganba231005/handwritten-meitei-mayek-recognition">GitHub</a>.</p>
+  </footer>
+</body>
+</html>

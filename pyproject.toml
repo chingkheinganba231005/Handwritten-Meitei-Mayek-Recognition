@@ -1,0 +1,14 @@
+[project]
+name = "mayek"
+version = "1.0.0"
+description = "Handwritten Meitei Mayek character recognition with fine-tuned pretrained CNNs"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+
+[tool.setuptools]
+packages = ["mayek"]
+
+[tool.pytest.ini_options]
+pythonpath = [".", "tests"]
+testpaths = ["tests"]

@@ -1,0 +1,13 @@
+torch>=2.1
+timm>=1.0.9
+numpy
+pandas
+opencv-python-headless
+scikit-image
+scikit-learn
+pillow
+matplotlib
+gradio
+huggingface_hub
+onnx
+onnxruntime
