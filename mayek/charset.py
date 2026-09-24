@@ -9,7 +9,7 @@ from typing import NamedTuple, Optional
 
 class CharClass(NamedTuple):
     index: int
-    char: Optional[str]  # None while the mapping is unconfirmed
+    char: Optional[str]
     name: str
 
     @property
@@ -39,10 +39,8 @@ _TABLE = [
     # Cheitap Iyek: vowel signs
     ("ꯥ", "anap"), ("ꯦ", "yenap"), ("ꯨ", "unap"), ("ꯤ", "inap"),
     ("ꯩ", "cheinap"), ("ꯣ", "onap"), ("ꯧ", "sounap"), ("ꯪ", "nung"),
-    # Khudam: punctuation
-    ("꯫", "cheikhei"),
-    # TODO: 054 has not been matched to a character yet.
-    (None, "unconfirmed"),
+    # full stop, and the apun iyek sign (class names as in the dataset's own table)
+    ("꯫", "cheikhei"), ("꯭", "apun iyek"),
 ]
 
 CLASSES = [CharClass(i, char, name) for i, (char, name) in enumerate(_TABLE)]

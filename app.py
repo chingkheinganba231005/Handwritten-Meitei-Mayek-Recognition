@@ -33,8 +33,6 @@ def recognise(image, source, use_tta):
     preds, seen = recognizer.predict(image, source=source, tta=use_tta, topk=5)
     top = preds[0].cls
     summary = f"# {top.display}\nclass {top.id} · {top.name} · {preds[0].prob:.1%}"
-    if top.char is None:
-        summary += "\n\nClass 054 has not been matched to a Unicode character yet."
     scores = {f"{p.cls.display}   {p.cls.id} · {p.cls.name}": p.prob for p in preds}
     return summary, scores, 255 - seen  # show dark ink on light paper
 

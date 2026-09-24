@@ -145,11 +145,6 @@ space/            cards for the Hugging Face Space and model repository
 tests/            pytest
 ```
 
-## Class 054
-
-One class of the dataset has not been matched to a Unicode character yet.
-The demo shows its class id instead of a glyph.
-
 ## Citation
 
 If you use this code, please cite the dataset:
