@@ -159,7 +159,23 @@ function clearResult() {
   $("seen").getContext("2d").clearRect(0, 0, 128, 128);
 }
 
+// Strokes can end faster than the network answers; run one recognition at a
+// time and, if more input arrived meanwhile, once more at the end.
+let busy = false;
+let pending = false;
+
 async function recognise() {
+  if (busy) { pending = true; return; }
+  busy = true;
+  try {
+    await recogniseNow();
+  } finally {
+    busy = false;
+  }
+  if (pending) { pending = false; recognise(); }
+}
+
+async function recogniseNow() {
   let gray;
   if (mode === "draw") {
     if (!strokes) { status("Draw a character first."); return; }
@@ -208,7 +224,8 @@ function showSeen(ink) {
   const im = c.createImageData(128, 128);
   for (let i = 0; i < ink.length; i++) {
     const v = 255 - ink[i];
-    im.data.set([v, v, v, 255], 4 * i);
+    im.data[4 * i] = im.data[4 * i + 1] = im.data[4 * i + 2] = v;
+    im.data[4 * i + 3] = 255;
   }
   c.putImageData(im, 0, 0);
 }

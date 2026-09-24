@@ -9,7 +9,6 @@ import numpy as np
 import pandas as pd
 import torch
 
-from .model import CHANNELS  # noqa: F401  (re-exported)
 from .preprocess import preprocess_file, size_features
 
 

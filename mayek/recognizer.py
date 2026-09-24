@@ -56,10 +56,13 @@ class Recognizer:
         meta = torch.from_numpy((meta - self.meta_norm[0]) / self.meta_norm[1]).float()
         return {"gray": img[:, None], "topo": torch.stack([img, skel, dist], 1)}, meta, img
 
-    @torch.no_grad()
     def probs(self, grays, tta=True):
         """Ensemble probabilities for dataset-like uint8 greyscale images."""
         x, meta, _ = self._inputs(grays)
+        return self._probs(x, meta, tta)
+
+    @torch.no_grad()
+    def _probs(self, x, meta, tta):
         total = 0
         for model, m in self.members:
             ch = m["cfg"]["channels"]
@@ -75,10 +78,9 @@ class Recognizer:
 
     def predict(self, image, source="canvas", tta=True, topk=5):
         """Returns (top-k predictions, the 128 px ink image the models saw)."""
-        small = self.dataset_like(image, source)
-        p = self.probs([small], tta)[0]
+        x, meta, img = self._inputs([self.dataset_like(image, source)])
+        p = self._probs(x, meta, tta)[0]
         top = np.argsort(-p)[:topk]
-        _, _, img = self._inputs([small])
         return [Prediction(int(i), float(p[i])) for i in top], (img[0].numpy() * 255).astype(np.uint8)
 
 

@@ -44,3 +44,36 @@ def test_export_and_recognise(tmp_path):
     assert all(0 <= p.prob <= 1 for p in preds) and preds[0].prob >= preds[-1].prob
     probs = rec.probs([glyph(0), glyph(1)])
     assert probs.shape == (2, 55) and np.allclose(probs.sum(1), 1, atol=1e-4)
+
+
+def test_download_skips_the_certificate_check_only_when_it_fails(tmp_path, monkeypatch):
+    import io
+    import ssl
+    import urllib.error
+    import zipfile
+
+    import pytest
+    from mayek import split
+
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        z.writestr("a.txt", "x")
+    contexts = []
+
+    def bad_certificate(req, context=None, timeout=None):
+        contexts.append(context)
+        if context is None:
+            raise urllib.error.URLError(ssl.SSLError("certificate verify failed"))
+        return io.BytesIO(buf.getvalue())
+
+    monkeypatch.setattr(split.urllib.request, "urlopen", bad_certificate)
+    split.download("https://example.org/t.zip", tmp_path / "t.zip")
+    assert zipfile.is_zipfile(tmp_path / "t.zip")
+    assert contexts[0] is None and contexts[1] is not None
+
+    def refused(req, context=None, timeout=None):
+        raise urllib.error.URLError(ConnectionRefusedError())
+
+    monkeypatch.setattr(split.urllib.request, "urlopen", refused)
+    with pytest.raises(urllib.error.URLError):
+        split.download("https://example.org/t.zip", tmp_path / "u.zip")

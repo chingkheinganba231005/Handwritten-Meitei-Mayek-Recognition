@@ -15,6 +15,7 @@ import os
 import random
 import shutil
 import ssl
+import urllib.error
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -26,12 +27,18 @@ IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".pgm"}
 
 
 def download(url, dest):
-    """The university server's certificate has been broken before, so don't insist on it."""
     dest = Path(dest)
     dest.parent.mkdir(parents=True, exist_ok=True)
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, context=ssl._create_unverified_context(), timeout=300) as r, \
-            open(dest, "wb") as f:
+    try:
+        r = urllib.request.urlopen(req, timeout=300)
+    except urllib.error.URLError as e:
+        if not isinstance(e.reason, ssl.SSLError):
+            raise
+        # the university server's certificate has been broken before
+        print(f"certificate check failed for {url} ({e.reason}); downloading without it")
+        r = urllib.request.urlopen(req, context=ssl._create_unverified_context(), timeout=300)
+    with r, open(dest, "wb") as f:
         shutil.copyfileobj(r, f)
     if not zipfile.is_zipfile(dest):
         dest.unlink()

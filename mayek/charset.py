@@ -47,19 +47,3 @@ _TABLE = [
 
 CLASSES = [CharClass(i, char, name) for i, (char, name) in enumerate(_TABLE)]
 NUM_CLASSES = len(CLASSES)
-
-SCRIPT_GROUPS = {
-    "Cheising Iyek (digits)": range(0, 10),
-    "Iyek Ipee (letters)": range(10, 37),
-    "Lonsum Iyek (finals)": range(37, 45),
-    "Cheitap Iyek (vowel signs)": range(45, 53),
-    "Khudam (punctuation)": range(53, 55),
-}
-
-
-def script_group(index: int) -> int:
-    """Index of the script sub-category a class belongs to (0-4)."""
-    for group, members in enumerate(SCRIPT_GROUPS.values()):
-        if index in members:
-            return group
-    raise ValueError(f"class index out of range: {index}")

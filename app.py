@@ -11,7 +11,6 @@ import os
 from pathlib import Path
 
 import gradio as gr
-import numpy as np
 
 from mayek.preprocess import load_gray
 from mayek.recognizer import Recognizer

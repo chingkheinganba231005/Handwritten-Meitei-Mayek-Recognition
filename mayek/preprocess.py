@@ -21,6 +21,10 @@ BINARY_THRESHOLD = 0.35
 DATASET_SIDE = 24      # typical TUMMHCD image size
 
 
+def _to_uint8(a):
+    return (a * 255 + 0.5).astype(np.uint8)
+
+
 def load_gray(image):
     """Path, PIL image or array -> uint8 greyscale array (transparent pixels count as white paper)."""
     if isinstance(image, np.ndarray):
@@ -76,8 +80,7 @@ def preprocess(gray, size=128):
     skel = skeletonize(binary).astype(np.float32)
     dist = cv2.distanceTransform(binary.astype(np.uint8), cv2.DIST_L2, 3)
     dist = dist / max(float(dist.max()), 1e-6)
-    to8 = lambda a: (a * 255 + 0.5).astype(np.uint8)
-    return to8(img), to8(skel), to8(dist), np.array([H, W, bh, bw, ink.mean()], np.float32)
+    return _to_uint8(img), _to_uint8(skel), _to_uint8(dist), np.array([H, W, bh, bw, ink.mean()], np.float32)
 
 
 def preprocess_file(path, size=128):

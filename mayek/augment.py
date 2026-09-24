@@ -40,8 +40,12 @@ def augment(x, aug=AUG):
         return x
     B, C, H, W = x.shape
     dev = x.device
-    u = lambda lo, hi: torch.empty(B, device=dev).uniform_(lo, hi)
-    chance = lambda p: (torch.rand(B, device=dev) < p).float().view(B, 1, 1, 1)
+
+    def u(lo, hi):
+        return torch.empty(B, device=dev).uniform_(lo, hi)
+
+    def chance(p):
+        return (torch.rand(B, device=dev) < p).float().view(B, 1, 1, 1)
 
     ang = u(-aug["rot"], aug["rot"]) * math.pi / 180
     sh = u(-aug["shear"], aug["shear"])

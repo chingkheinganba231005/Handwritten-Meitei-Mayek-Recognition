@@ -104,6 +104,9 @@ def build_site(out_dir, cfg, stats, views, stroke_ratio, info, onnx_path=None, m
     copied next to the page. ort_tarball: bundle ONNX Runtime Web from this npm
     tarball instead of loading it from the jsDelivr CDN.
     """
+    ch = cfg["channels"]
+    if ch != "gray":
+        raise ValueError("the browser demo implements the ink channel only")
     out_dir = Path(out_dir)
     if out_dir.exists():
         shutil.rmtree(out_dir)
@@ -114,9 +117,6 @@ def build_site(out_dir, cfg, stats, views, stroke_ratio, info, onnx_path=None, m
     if ort_tarball is not None:
         fetch_ort(out_dir / "ort", ort_tarball)
         ort_base = "ort/"
-    ch = cfg["channels"]
-    if ch != "gray":
-        raise ValueError("the browser demo implements the ink channel only")
     config = {
         "img": img, "views": list(views), "stroke_ratio": float(stroke_ratio), "model_mb": model_mb,
         "mean": stats[ch]["mean"][0], "std": stats[ch]["std"][0],
