@@ -35,10 +35,11 @@ errors; 95% CI 97.87–98.34%), the **highest accuracy reported on TUMMHCD** so
 far. The best published results on the same test set
 are 95.56% ([Hijam and Saharia, 2022](https://doi.org/10.1007/s00371-020-02032-y), CNN)
 and 97.08% ([Hijam and Saharia, 2024](https://doi.org/10.1007/s00371-023-02776-3),
-multilevel feature fusion), which is about 374 errors; a two-stage method with
-zone information and orthographic rules reported 91.86%
-([Hijam and Saharia, 2024](https://doi.org/10.1007/s12065-024-00920-z)). Each of the six
-networks beats both on its own.
+multilevel feature fusion, about 374 errors). Each of the six networks beats
+both on its own. A later two-stage method with zone information and
+orthographic rules ([Hijam and Saharia, 2024](https://doi.org/10.1007/s12065-024-00920-z))
+works on whole words and was evaluated on a separate set of 100 words, so its
+91.86% is not comparable.
 
 What matters, from the ablations (ConvNeXt-T, validation): ImageNet
 pretraining (−0.77 points without it), augmentation (−0.48 without it;
@@ -56,7 +57,7 @@ by the experiments notebook.
 
 **Preprocessing.** An Otsu threshold finds the ink. Ink is scaled to 1 and
 paper to 0, so faint and dark scans look alike. The character is cropped to
-its ink with a 16% margin, padded to a square and resized to 128 × 128. For
+its ink with an 8% margin on each side, padded to a square and resized to 128 × 128. For
 the ResNet the skeleton and the distance transform of that image become the
 second and third channels.
 

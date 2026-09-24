@@ -10,14 +10,16 @@ tags:
 
 # Handwritten Meitei Mayek character recognition
 
-Three ImageNet-pretrained CNNs fine-tuned on the 55-class TUMMHCD dataset of
-isolated handwritten Meitei Mayek characters. The ensemble gets
+Six networks fine-tuned on the 55-class TUMMHCD dataset of isolated
+handwritten Meitei Mayek characters: ConvNeXt-T, EfficientNetV2-S and
+ResNet-50-D, all ImageNet-pretrained, each trained once on the image alone and
+once with five size features (the `_meta` files). Their average gets
 {ensemble_accuracy}% top-1 accuracy on the 12,794 test images.
 
 | File | What |
 |---|---|
 | `config.json` | members, test-time views, ensemble weights, normalisation statistics |
-| `convnext_t.pt`, `effv2_s.pt`, `resnet50d_topo.pt` (names follow the members in `config.json`) | PyTorch state dicts |
+| `convnext_t.pt`, `effv2_s.pt`, `resnet50d_topo.pt` and their `_meta` versions (names as in `config.json`) | PyTorch state dicts |
 | `web/model.onnx` | the EfficientNetV2-S member for the browser ({web_accuracy}% on its own), weights stored as float16 |
 
 ## Use

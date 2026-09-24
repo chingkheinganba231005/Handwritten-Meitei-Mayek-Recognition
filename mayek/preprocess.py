@@ -1,7 +1,7 @@
 """Turning a character image into network input.
 
 ``preprocess`` is what every model was trained on: Otsu ink mask, ink scaled
-to 1 and paper to 0, crop to the ink with a 16% margin, pad to a square,
+to 1 and paper to 0, crop to the ink with an 8% margin on each side, pad to a square,
 resize, then skeleton and distance transform of the result.
 
 ``to_dataset_scale`` is only for the demo. TUMMHCD images are small scans

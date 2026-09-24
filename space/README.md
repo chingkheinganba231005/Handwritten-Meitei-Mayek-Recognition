@@ -20,7 +20,7 @@ letters, final consonants, vowel signs and punctuation.
 
 The page runs a fine-tuned EfficientNetV2-S ({web_accuracy}% top-1 on the
 12,794 TUMMHCD test images) in your browser with ONNX Runtime Web. Nothing
-you draw or upload is sent anywhere. The full three-network ensemble
+you draw or upload is sent anywhere. The full six-network ensemble
 ({ensemble_accuracy}%) and all trained weights are in the model repository
 [{hf_id}](https://huggingface.co/{hf_id}).
 

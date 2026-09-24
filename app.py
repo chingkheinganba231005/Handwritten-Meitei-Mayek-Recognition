@@ -20,8 +20,10 @@ REPO_URL = "https://github.com/chingkheinganba231005/Handwritten-Meitei-Mayek-Re
 
 recognizer = Recognizer(MODEL_DIR)
 config = json.loads((MODEL_DIR / "config.json").read_text())
-MEMBERS = " + ".join({"convnext": "ConvNeXt-T", "effv2": "EfficientNetV2-S", "resnet50d": "ResNet-50-D"}.get(
-    m["name"].split("_")[0], m["name"]) for m in config["members"])
+NAMES = {"convnext": "ConvNeXt-T", "effv2": "EfficientNetV2-S", "resnet50d": "ResNet-50-D"}
+MEMBERS = " + ".join(dict.fromkeys(NAMES.get(m["name"].split("_")[0], m["name"]) for m in config["members"]))
+if any(m["name"].endswith("_meta") for m in config["members"]):
+    MEMBERS += ", each with and without size features"
 
 
 def recognise(image, source, use_tta):
