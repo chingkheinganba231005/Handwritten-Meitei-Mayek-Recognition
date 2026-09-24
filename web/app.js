@@ -50,7 +50,7 @@ async function load() {
     `Downloading the model${config.model_mb ? ` (${Math.round(config.model_mb)} MB, only the first time)` : ""}…`);
   status("Starting the model…");
   session = await ort.InferenceSession.create(bytes, { executionProviders: ["wasm"] });
-  status("Ready. Draw a character.");
+  status("Ready. Draw a character, then press Recognise.");
   $("recognise").disabled = false;
 }
 

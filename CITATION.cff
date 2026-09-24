@@ -10,4 +10,5 @@ license: MIT
 repository-code: "https://github.com/chingkheinganba231005/Handwritten-Meitei-Mayek-Recognition"
 url: "https://huggingface.co/spaces/Chingkheinganba/handwritten-meitei-mayek-recognition"
 version: 1.0.0
+doi: "10.5281/zenodo.22932284"
 date-released: 2026-09-23

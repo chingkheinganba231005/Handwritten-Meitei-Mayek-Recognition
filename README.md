@@ -1,5 +1,7 @@
 # Handwritten Meitei Mayek Recognition
 
+[![DOI](https://zenodo.org/badge/1383325967.svg)](https://doi.org/10.5281/zenodo.22932284)
+
 Recognising handwritten Meitei Mayek characters (all 55 classes of the
 TUMMHCD dataset) with ImageNet-pretrained CNNs, fine-tuned with augmentation
 designed for handwriting.
@@ -155,7 +157,13 @@ If you use this code, please cite the dataset:
 > D. Hijam and S. Saharia, "On developing complete character set Meitei Mayek
 > handwritten character database," *The Visual Computer*, 38, 525–539 (2022).
 
-and this repository (see [`CITATION.cff`](CITATION.cff)).
+and this repository, archived on Zenodo:
+
+> C. Rajkumar, *Handwritten Meitei Mayek Recognition*, version 1.0.0, Zenodo (2026).
+> https://doi.org/10.5281/zenodo.22932285
+
+The DOI 10.5281/zenodo.22932284 always resolves to the latest version
+(see also [`CITATION.cff`](CITATION.cff)).
 
 ## License
 
